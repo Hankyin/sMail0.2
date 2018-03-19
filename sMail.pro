@@ -56,7 +56,8 @@ SOURCES += \
     mailsender.cpp \
     mailviewer.cpp \
     main.cpp \
-    smail.cpp
+    smail.cpp \
+    subControl/viewer/mailbrowser.cpp
 
 
 HEADERS += \
@@ -88,7 +89,8 @@ HEADERS += \
     database.h \
     mailsender.h \
     mailviewer.h \
-    smail.h
+    smail.h \
+    subControl/viewer/mailbrowser.h
 
 
 RESOURCES += \

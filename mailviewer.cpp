@@ -18,9 +18,11 @@ MailViewer::MailViewer(UserInfo user)
     hLayout->addWidget(sideBar);
     hLayout->addWidget(listStack);
     hLayout->addWidget(webView,1);
+    mailSender = nullptr;
 
     connect(sideBar,SIGNAL(selectDirClick()),this,SLOT(toDirList()));
     connect(sideBar,SIGNAL(selectUserClick()),this,SLOT(toUserList()));
+    connect(sideBar,SIGNAL(writeMailClick()),this,SLOT(writeMail()));
     connect(listStack,SIGNAL(mailClick(int)),this,SLOT(showMail(int)));
     connect(listStack,SIGNAL(dirClick(QString)),this,SLOT(changeDir(QString)));
 
@@ -38,7 +40,7 @@ MailViewer::MailViewer(UserInfo user)
 
 MailViewer::~MailViewer()
 {
-
+    imap->logout();
 }
 
 void MailViewer::setMailList(const QList<MailInfo> &mailList)
@@ -73,12 +75,16 @@ void MailViewer::toDirList()
 
 void MailViewer::writeMail()
 {
-    MailSender *mailSender = new MailSender(user);
+    if(mailSender == nullptr)
+    {
+        mailSender = new MailSender(user);
+    }
+    mailSender->show();
 }
 
 void MailViewer::IMAPError(QString error)
 {
-
+    qDebug()<< error<<endl;
 }
 
 void MailViewer::IMAPConnected()
@@ -100,7 +106,8 @@ void MailViewer::IMAPListFinish(QList<IMAPDir> dirs)
 void MailViewer::IMAPSelectFinish(QString dir, uint mails, uint recents)
 {
     curDir = dir;
-    for(uint i = 1;i < mails;i++)
+    uint maxMail = mails > 10 ? 10: mails;
+    for(uint i = 1;i < maxMail;i++)
     {
         imap->fetch(QString::number(i),"BODY[]");
     }

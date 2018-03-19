@@ -9,6 +9,7 @@
 #include "netProtocol/imap.h"
 
 //class sMail;
+class MailSender;
 
 class MailViewer : public QWidget
 {
@@ -46,6 +47,7 @@ private:
     QString curDir;
     QList<QString> mails;
     QList<MailInfo> headList;
+    MailSender *mailSender;
 };
 
 #endif // MAILVIEWER_H
