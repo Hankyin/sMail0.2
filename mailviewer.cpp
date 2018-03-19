@@ -1,38 +1,24 @@
 ﻿#include "mailviewer.h"
 #include <QHBoxLayout>
-#include "utils/type.h"
 #include "utils/mime.h"
-#include "smail.h"
-#include "mailsender.h"
 
-MailViewer::MailViewer(UserInfo user)
+MailViewer::MailViewer(DataBase *db)
     : QWidget(nullptr)
 {
-//    this->smail = smail;
-    this->user = user;
+    //init member
+    this->db = db;
     imap = new IMAP(this);
-    QHBoxLayout *hLayout = new QHBoxLayout(this);
-    sideBar = new SideBar(this);
-    listStack = new ListStack(this);
-    webView = new QWebView(this);
-    hLayout->addWidget(sideBar);
-    hLayout->addWidget(listStack);
-    hLayout->addWidget(webView,1);
     mailSender = nullptr;
+    timer = new QTimer(this);//定时向imap发送noop
 
-    connect(sideBar,SIGNAL(selectDirClick()),this,SLOT(toDirList()));
-    connect(sideBar,SIGNAL(selectUserClick()),this,SLOT(toUserList()));
-    connect(sideBar,SIGNAL(writeMailClick()),this,SLOT(writeMail()));
-    connect(listStack,SIGNAL(mailClick(int)),this,SLOT(showMail(int)));
-    connect(listStack,SIGNAL(dirClick(QString)),this,SLOT(changeDir(QString)));
+    //从数据库中读取数据
+    userList = db->getUserList();
+    user = userList.at(0);//默认第一个用户登录
+    dir = "INBOX";
+    mailList = db->getMailList(user.mail,dir);//默认INBOX
 
-    connect(imap,SIGNAL(IMAPError(QString)),this,SLOT(IMAPError(QString)));
-    connect(imap,SIGNAL(connected()),this,SLOT(IMAPConnected()));
-    connect(imap,SIGNAL(loginFinish()),this,SLOT(IMAPLoginFinish()));
-    connect(imap,SIGNAL(listFinish(QList<IMAPDir>)),this,SLOT(IMAPListFinish(QList<IMAPDir>)));
-    connect(imap,SIGNAL(selectFinish(QString,uint,uint)),this,SLOT(IMAPSelectFinish(QString,uint,uint)));
-    connect(imap,SIGNAL(fetchFinish(int,QString)),this,SLOT(IMAPFetchFinsh(int,QString)));
-    connect(imap,SIGNAL(searchFinish(QList<int>)),this,SLOT(IMAPSearchFinish(QList<int>)));
+    initUI();
+    initConnect();
 
     imap->setDebug(true);
     imap->connectServer(user.IMAPServer,user.IMAPPort,user.isIMAPSSL);
@@ -43,35 +29,6 @@ MailViewer::~MailViewer()
     imap->logout();
 }
 
-void MailViewer::setMailList(const QList<MailInfo> &mailList)
-{
-    listStack->setMailList(mailList);
-}
-
-void MailViewer::setDirList(const QList<DirInfo> &dirList)
-{
-    listStack->setDirList(dirList);
-}
-
-void MailViewer::setUserList(const QList<UserInfo> &userList)
-{
-    listStack->setUserList(userList);
-}
-
-void MailViewer::toMailList()
-{
-    listStack->setCurrentIndex(0);
-}
-
-void MailViewer::toUserList()
-{
-    listStack->setCurrentIndex(1);
-}
-
-void MailViewer::toDirList()
-{
-    listStack->setCurrentIndex(2);
-}
 
 void MailViewer::writeMail()
 {
@@ -82,6 +39,8 @@ void MailViewer::writeMail()
     mailSender->show();
 }
 
+
+//IMAP系列响应函数
 void MailViewer::IMAPError(QString error)
 {
     qDebug()<< error<<endl;
@@ -99,15 +58,29 @@ void MailViewer::IMAPLoginFinish()
 
 void MailViewer::IMAPListFinish(QList<IMAPDir> dirs)
 {
-    this->setDirList(dirs);
-    imap->select("INBOX");
+    dirList = dirs;
+    this->dir = "INBOX";
+    imap->select(this->dir);
 }
 
 void MailViewer::IMAPSelectFinish(QString dir, uint mails, uint recents)
 {
-    curDir = dir;
-    uint maxMail = mails > 10 ? 10: mails;
-    for(uint i = 1;i < maxMail;i++)
+    this->dir = dir;
+    this->mailList = db->getMailList(user.mail,dir);
+    if(mailList.isEmpty())
+    {
+        imap->search("ALL");
+    }
+    else
+    {
+        imap->search("NEW");
+    }
+}
+
+void MailViewer::IMAPSearchFinish(QList<int> searchList)
+{
+    //搜索结果可能是不连续的，所以只能一个一个fetch
+    for(auto i : searchList)
     {
         imap->fetch(QString::number(i),"BODY[]");
     }
@@ -115,32 +88,60 @@ void MailViewer::IMAPSelectFinish(QString dir, uint mails, uint recents)
 
 void MailViewer::IMAPFetchFinsh(int index, QString mail)
 {
-    this->mails<<mail;
     MailPraser praser(mail.toUtf8());
     MailInfo head;
     head.subject = praser.getSubject();
-    head.sender = praser.getSenderMail();
-    head.date = praser.getDateTime().date();
+    head.to = praser.getTo();
+    head.from = praser.getFrom();
+    head.datetime = praser.getDateTime();
     head.index = index;
-    this->headList.append(head);
-    this->listStack->setMailList(headList);
+    head.hasRead = false;
+    head.dir = this->dir;
+    head.mailbox = user.mail;
+    db->insertNewMail(head,mail);
+    mailList.append(head);
+//    this->listStack->setMailList(mailList);
 }
 
-void MailViewer::IMAPSearchFinish(QList<int> searchList)
-{
 
-}
 
 void MailViewer::showMail(int i)
 {
-    QString mail = mails.at(i-1);
-    MailPraser praser(mail.toUtf8());
-    QString html = praser.getHtml();
-    this->webView->setHtml(html);
+//    QString mail = db->getMailByID(i);
+//    MailPraser praser(mail.toUtf8());
+//    QString html = praser.getHtml();
+//    this->webView->setHtml(html);
 }
 
 void MailViewer::changeDir(QString dir)
 {
     imap->select(dir);
-    toMailList();
+}
+
+void MailViewer::initUI()
+{
+    QHBoxLayout *hLayout = new QHBoxLayout(this);
+    sideBar = new SideBar(this);
+    mailPage = new MailPage(this);
+    webView = new QWebView(this);
+    hLayout->addWidget(sideBar);
+    hLayout->addWidget(mailPage);
+    hLayout->addWidget(webView,1);
+}
+
+void MailViewer::initConnect()
+{
+//    connect(sideBar,SIGNAL(selectDirClick()),this,SLOT(toDirList()));
+//    connect(sideBar,SIGNAL(selectUserClick()),this,SLOT(toUserList()));
+//    connect(sideBar,SIGNAL(writeMailClick()),this,SLOT(writeMail()));
+//    connect(listStack,SIGNAL(mailClick(int)),this,SLOT(showMail(int)));
+//    connect(listStack,SIGNAL(dirClick(QString)),this,SLOT(changeDir(QString)));
+
+    connect(imap,SIGNAL(IMAPError(QString)),this,SLOT(IMAPError(QString)));
+    connect(imap,SIGNAL(connected()),this,SLOT(IMAPConnected()));
+    connect(imap,SIGNAL(loginFinish()),this,SLOT(IMAPLoginFinish()));
+    connect(imap,SIGNAL(listFinish(QList<IMAPDir>)),this,SLOT(IMAPListFinish(QList<IMAPDir>)));
+    connect(imap,SIGNAL(selectFinish(QString,uint,uint)),this,SLOT(IMAPSelectFinish(QString,uint,uint)));
+    connect(imap,SIGNAL(fetchFinish(int,QString)),this,SLOT(IMAPFetchFinsh(int,QString)));
+    connect(imap,SIGNAL(searchFinish(QList<int>)),this,SLOT(IMAPSearchFinish(QList<int>)));
 }

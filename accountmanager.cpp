@@ -8,9 +8,8 @@
 #include <QSpinBox>
 #include <QCheckBox>
 
-AccountManager::AccountManager(sMail *smail) : QStackedWidget(nullptr)
+AccountManager::AccountManager() : QStackedWidget(nullptr)
 {
-    this->smail = smail;
     userInfoPage = new QWidget;
     serverInfoPage = new QWidget;
 

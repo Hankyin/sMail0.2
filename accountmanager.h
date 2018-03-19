@@ -18,7 +18,7 @@ class AccountManager : public QStackedWidget
 {
     Q_OBJECT
 public:
-    explicit AccountManager(sMail *smail);
+    explicit AccountManager();
 
 signals:
     void userInfoReady(UserInfo newUser);
@@ -50,7 +50,6 @@ private:
     QWidget *userInfoPage;
     QWidget *serverInfoPage;
     UserInfo user;
-    sMail *smail;
 };
 
 #endif // ACCOUNTMANAGER_H

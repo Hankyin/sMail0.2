@@ -49,5 +49,5 @@ bool MailItem::search(const DSimpleListItem *item, QString searchContent)
 {
     const MailItem *mailItem = static_cast<const MailItem*>(item);
     return (mailItem->itemInfo.subject.contains(searchContent,Qt::CaseInsensitive) ||
-            mailItem->itemInfo.sender.contains(searchContent));
+            mailItem->itemInfo.from.contains(searchContent));
 }

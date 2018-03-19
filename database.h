@@ -11,11 +11,10 @@ class DataBase : public QObject
 public:
     explicit DataBase(QObject *parent = nullptr);
     QList<UserInfo> getUserList();
-    QList<DirInfo> getDirList(const QString &mail);
-    QList<MailInfo> getMailList(const QString &mail,const QString &dir);
+    QList<MailInfo> getMailList(const QString &mailbox, const QString &dir);
+    QByteArray getMailByID(int index, const QString &mailbox);
     void insertNewUser(const UserInfo &newUser);
-    void insertNewDir(const DirInfo &newDir);
-    void insertNewMail(int index, const QString &mail);
+    void insertNewMail(const MailInfo &mailinfo, const QString &mail);
 signals:
     void error();
 public slots:

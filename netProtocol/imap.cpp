@@ -48,6 +48,7 @@ IMAP::IMAP(QObject *parent) : QObject(parent)
     addRespHandler("RECENT", &IMAP::recentHandler);
     addRespHandler("EXISTS", &IMAP::existsHandler);
     addRespHandler("FETCH", &IMAP::fetchHandler);
+    addRespHandler("SEARCH", &IMAP::searchHandler);
 }
 
 void IMAP::connectServer(const QString hostName, quint16 port, bool ssl)
@@ -129,10 +130,10 @@ void IMAP::socketReadyRead()
         {
             //说明这一行是邮件文本，不是imap命令
             literalBuf.append(line + CRLF);
-            if(debug)
-            {
-                printMsg("literal:" + line);
-            }
+//            if(debug)
+//            {
+//                printMsg("literal:" + line);
+//            }
             if(literalBuf.size() >= literalSize)
             {
                 printMsg(QString("receive literal message: %1, expect %2").arg(
@@ -551,6 +552,7 @@ void IMAP::select(const QString &mailBox)
 {
     QString command = "SELECT";
     QString arg = mailBox;
+    this->curDir = mailBox;
     sendCommand(command,arg);
 }
 

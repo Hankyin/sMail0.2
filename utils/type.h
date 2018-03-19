@@ -2,28 +2,20 @@
 #define TYPE_H
 
 #include <QString>
-#include <QDate>
+#include <QDateTime>
 //邮件摘要信息，可用于邮件列表的显示。
 class MailInfo
 {
 public:
     MailInfo() {}
-    QString sender;
-    QString subject;
-    QString abstract;
-    bool hasRead;
-    QDate date;
+    QString mailbox;
+    QString dir;
     int index;
-    MailInfo& operator =(const MailInfo &item)
-    {
-        this->subject = item.subject;
-        this->sender = item.sender;
-        this->abstract = item.abstract;
-        this->date = item.date;
-        this->hasRead = item.hasRead;
-        this->index = item.index;
-        return *this;
-    }
+    bool hasRead;
+    QString from;
+    QString to;
+    QString subject;
+    QDateTime datetime;
 };
 
 class UserInfo

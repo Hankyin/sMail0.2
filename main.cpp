@@ -5,13 +5,13 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     sMail w;
-    if(w.getUserList().isEmpty())
+    if(w.getUserListFromDB())
     {
-        w.getAccountManager()->show();
+        w.login();
     }
     else
     {
-        w.getMailViewer()->show();
+        w.addUser();
     }
 
     return a.exec();
