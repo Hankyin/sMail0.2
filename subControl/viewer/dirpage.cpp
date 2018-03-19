@@ -29,6 +29,6 @@ void DirPage::setDirList(const QList<DirInfo> &dirList)
 
 void DirPage::selectItem(DSimpleListItem *item)
 {
-    DirItem *dirItem = static_cast<DirItem*> item;
+    DirItem *dirItem = static_cast<DirItem*> (item);
     emit itemClick(dirItem->dirName);
 }

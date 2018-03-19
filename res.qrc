@@ -6,5 +6,11 @@
         <file>image/user.png</file>
         <file>image/writeMail.png</file>
         <file>image/contact.png</file>
+        <file>image/attachment.png</file>
+        <file>image/emoji.png</file>
+        <file>image/file.png</file>
+        <file>image/img.png</file>
+        <file>image/send.png</file>
+        <file>image/translate.png</file>
     </qresource>
 </RCC>

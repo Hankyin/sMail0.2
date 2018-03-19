@@ -11,7 +11,7 @@
 #include "netProtocol/smtp.h"
 
 MailSender::MailSender(UserInfo user)
-    : QWidget(user)
+    : QWidget(0)
 {
     this->user = user;
     from = new LineEdit(tr("发件人:"));
@@ -59,7 +59,7 @@ void MailSender::addAttachment()
     if(attachmentPath.isEmpty())
         return;
     this->editor->addItem(attachmentPath);
-    this->attachList.append(attachmentPath);
+    this->attList.append(attachmentPath);
 
 }
 
@@ -149,10 +149,11 @@ void MailSender::sendMail()
             MIMEApplication att(fn,MIME::application_octet_stream);
             mixed.append(att);
         }
+    }
 
         SMTP *smtp = new SMTP(this);
         smtp->setDebugMode(true);
-        smtp->setServerAddr(userInfo.SMTPServer,userInfo.SMTPPort,userInfo.SMTPSSL);
-        smtp->setLoginInfo(userInfo.mailAddr,userInfo.mailPasswd);
-        smtp->sendMail(rcptTo,mail.toUtf8());
+        smtp->setServerAddr(user.SMTPServer,user.SMTPPort,user.isSMTPSSL);
+        smtp->setLoginInfo(user.mail,user.pass);
+        smtp->sendMail(rcptTo,mixed.getContent());
 }

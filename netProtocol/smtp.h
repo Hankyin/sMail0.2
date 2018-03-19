@@ -8,7 +8,7 @@
 #include <QStringList>
 #include <QList>
 #include <QDebug>
-#include "mime.h"
+#include "utils/mime.h"
 
 class SCommend
 {

@@ -73,7 +73,7 @@ void MailViewer::toDirList()
 
 void MailViewer::writeMail()
 {
-    MailSender *mailSender = new MailSender()
+    MailSender *mailSender = new MailSender(user);
 }
 
 void MailViewer::IMAPError(QString error)
