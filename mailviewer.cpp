@@ -3,6 +3,7 @@
 #include "utils/type.h"
 #include "utils/mime.h"
 #include "smail.h"
+#include "mailsender.h"
 
 MailViewer::MailViewer(UserInfo user)
     : QWidget(nullptr)
@@ -68,6 +69,11 @@ void MailViewer::toUserList()
 void MailViewer::toDirList()
 {
     listStack->setCurrentIndex(2);
+}
+
+void MailViewer::writeMail()
+{
+    MailSender *mailSender = new MailSender()
 }
 
 void MailViewer::IMAPError(QString error)

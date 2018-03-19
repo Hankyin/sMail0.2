@@ -76,7 +76,36 @@ SOURCES += \
     smail.cpp \
     utils/flowlayout.cpp \
     utils/mime.cpp \
-    utils/translator.cpp
+    utils/translator.cpp \
+    netProtocol/imap.cpp \
+    netProtocol/pop.cpp \
+    netProtocol/smtp.cpp \
+    subControl/sender/cmdbar.cpp \
+    subControl/sender/emojipicker.cpp \
+    subControl/sender/itembutton.cpp \
+    subControl/sender/lineedit.cpp \
+    subControl/sender/maileditor.cpp \
+    subControl/viewer/diritem.cpp \
+    subControl/viewer/dirlistview.cpp \
+    subControl/viewer/dirpage.cpp \
+    subControl/viewer/liststack.cpp \
+    subControl/viewer/mailitem.cpp \
+    subControl/viewer/maillistview.cpp \
+    subControl/viewer/mailpage.cpp \
+    subControl/viewer/sidebar.cpp \
+    subControl/viewer/sidebutton.cpp \
+    subControl/viewer/useritem.cpp \
+    subControl/viewer/userlistview.cpp \
+    subControl/viewer/userpage.cpp \
+    utils/flowlayout.cpp \
+    utils/mime.cpp \
+    utils/translator.cpp \
+    accountmanager.cpp \
+    database.cpp \
+    mailsender.cpp \
+    mailviewer.cpp \
+    main.cpp \
+    smail.cpp
 
 
 HEADERS += \
@@ -129,7 +158,36 @@ HEADERS += \
     utils/flowlayout.h \
     utils/mime.h \
     utils/translator.h \
-    utils/type.h
+    utils/type.h \
+    netProtocol/imap.h \
+    netProtocol/pop.h \
+    netProtocol/smtp.h \
+    subControl/sender/cmdbar.h \
+    subControl/sender/emojipicker.h \
+    subControl/sender/itembutton.h \
+    subControl/sender/lineedit.h \
+    subControl/sender/maileditor.h \
+    subControl/viewer/diritem.h \
+    subControl/viewer/dirlistview.h \
+    subControl/viewer/dirpage.h \
+    subControl/viewer/liststack.h \
+    subControl/viewer/mailitem.h \
+    subControl/viewer/maillistview.h \
+    subControl/viewer/mailpage.h \
+    subControl/viewer/sidebar.h \
+    subControl/viewer/sidebutton.h \
+    subControl/viewer/useritem.h \
+    subControl/viewer/userlistview.h \
+    subControl/viewer/userpage.h \
+    utils/flowlayout.h \
+    utils/mime.h \
+    utils/translator.h \
+    utils/type.h \
+    accountmanager.h \
+    database.h \
+    mailsender.h \
+    mailviewer.h \
+    smail.h
 
 RESOURCES += \
     res.qrc

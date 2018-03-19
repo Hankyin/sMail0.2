@@ -20,6 +20,8 @@ public:
     void setTitle(QString title) {this->label->setText(title);}
     void setReadOnly(bool readonly) {this->edit->setReadOnly(readonly);}
     void setComplater(QCompleter *complater);
+    QList<QString> getItemList();
+    QString text() {return this->edit->text();}
 signals:
     void itemCountChange();
 private slots:

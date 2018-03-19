@@ -25,6 +25,7 @@ private slots:
     void toMailList();
     void toUserList();
     void toDirList();
+    void writeMail();
 
     void IMAPError(QString error);
     void IMAPConnected();

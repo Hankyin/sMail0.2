@@ -1,4 +1,4 @@
-#include "lineedit.h"
+﻿#include "lineedit.h"
 #include "itembutton.h"
 #include <QHBoxLayout>
 #include <QVBoxLayout>
@@ -48,6 +48,18 @@ void LineEdit::setComplater(QCompleter *complater)
 {
     //connect(complater,SIGNAL(activated(QString)),this,SLOT(addItem()));
     this->edit->setCompleter(complater);
+}
+
+QList<QString> LineEdit::getItemList()
+{
+    QList<QString> list;
+    for(auto i : this->itemBtList)
+    {
+        QString it;
+        it = i->getData();
+        list<<it;
+    }
+    return list;
 }
 
 void LineEdit::addItem()
