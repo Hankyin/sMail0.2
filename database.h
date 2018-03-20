@@ -12,7 +12,7 @@ public:
     explicit DataBase(QObject *parent = nullptr);
     QList<UserInfo> getUserList();
     QList<MailInfo> getMailList(const QString &mailbox, const QString &dir);
-    QByteArray getMailByID(int index, const QString &mailbox);
+    QString getMailByID(int index, const QString &mailbox);
     void insertNewUser(const UserInfo &newUser);
     void insertNewMail(const MailInfo &mailinfo, const QString &mail);
 signals:

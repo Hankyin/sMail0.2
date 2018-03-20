@@ -2,7 +2,7 @@
 #define MAILVIEWER_H
 
 #include <QWidget>
-#include <QWebView>
+#include "subControl/viewer/mailbrowser.h"
 #include "subControl/viewer/sidebar.h"
 #include "subControl/viewer/mailpage.h"
 
@@ -38,11 +38,13 @@ private slots:
 
     void showMail(int i);
     void changeDir(QString dir);
+    void changeUser(QString mail);
 private:
     //界面
     SideBar *sideBar;
     MailPage *mailPage;
-    QWebView *webView;
+//    QWebView *webView;
+    MailBrowser *mailBrowser;
 
     //邮件类
     QTimer *timer;

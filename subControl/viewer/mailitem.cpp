@@ -11,7 +11,8 @@ MailItem::MailItem(const MailInfo &item)
 
 bool MailItem::sameAs(DSimpleListItem *item)
 {
-    return itemInfo.subject == (static_cast<MailItem*>(item))->itemInfo.subject;
+//    return itemInfo.subject == (static_cast<MailItem*>(item))->itemInfo.subject;
+    return false;
 }
 
 void MailItem::drawBackground(QRect rect, QPainter *painter, int index, bool isSelect, bool isHover)
@@ -22,6 +23,10 @@ void MailItem::drawBackground(QRect rect, QPainter *painter, int index, bool isS
     if(isSelect)
     {
         painter->fillPath(path,QColor(Qt::blue));
+    }
+    else if(isHover)
+    {
+        painter->fillPath(path,QColor(Qt::darkGray));
     }
     else if(index % 2 == 1)
     {
@@ -41,7 +46,8 @@ void MailItem::drawForeground(QRect rect, QPainter *painter, int column, int ind
         painter->setPen(QPen(QColor(Qt::black)));
     }
     int padding = 10;
-    painter->drawText(QRect(rect.x() + padding,rect.y(),rect.width() - padding * 2,rect.height()),
+    painter->drawText(QRect(rect.x() + 1,rect.y(),rect.width()/2,rect.height()/3),Qt::AlignLeft|Qt::AlignTop,itemInfo.from);
+    painter->drawText(QRect(rect.x() + padding,rect.y()+rect.height()/3,rect.width() - padding * 2,rect.height()/3*2),
                       Qt::AlignLeft|Qt::AlignVCenter,itemInfo.subject);
 }
 

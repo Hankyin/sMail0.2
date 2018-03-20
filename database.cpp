@@ -102,7 +102,7 @@ QList<MailInfo> DataBase::getMailList(const QString &mailbox,const QString &dir)
     bool ok = false;
     QList<MailInfo> list;
     QSqlQuery query(db);
-    QString sql = "SELECT * FROM Mail WHERE mailbox like %1 AND dir like %2;";
+    QString sql = "SELECT * FROM Mail WHERE mailbox like '%1' AND dir like '%2';";
     ok = query.exec(sql.arg(mailbox,dir));
 
     if(!ok)
@@ -117,10 +117,10 @@ QList<MailInfo> DataBase::getMailList(const QString &mailbox,const QString &dir)
         MailInfo m;
         m.mailbox = query.value("mailbox").toString();
         m.dir = query.value("dir").toString();
-        m.index = query.value("index").toInt();
+        m.index = query.value("id").toInt();
         m.hasRead = query.value("hasRead").toBool();
-        m.from = query.value("from").toString();
-        m.to = query.value("to").toString();
+        m.from = query.value("sender").toString();
+        m.to = query.value("receiver").toString();
         m.subject = query.value("subject").toString();
         m.datetime = query.value("datetime").toDateTime();
         list.append(m);
@@ -128,11 +128,11 @@ QList<MailInfo> DataBase::getMailList(const QString &mailbox,const QString &dir)
     return list;
 }
 
-QByteArray DataBase::getMailByID(int index, const QString &mailbox)
+QString DataBase::getMailByID(int index, const QString &mailbox)
 {
-    QByteArray mail;
+    QString mail;
     QSqlQuery query(db);
-    QString sql = "SELECT content FROM Mail WHERE mailbox like %1 AND id=%2";
+    QString sql = "SELECT content FROM Mail WHERE mailbox like '%1' AND id=%2";
     bool ok = query.exec(sql.arg(mailbox,QString::number(index)));
     if(!ok)
     {
@@ -142,7 +142,7 @@ QByteArray DataBase::getMailByID(int index, const QString &mailbox)
     }
     while(query.next())
     {
-        mail = query.value("content").toByteArray();
+        mail = query.value("content").toString();
     }
     return mail;
 }

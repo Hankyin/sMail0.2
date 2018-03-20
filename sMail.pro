@@ -36,18 +36,11 @@ SOURCES += \
     subControl/sender/itembutton.cpp \
     subControl/sender/lineedit.cpp \
     subControl/sender/maileditor.cpp \
-    subControl/viewer/diritem.cpp \
-    subControl/viewer/dirlistview.cpp \
-    subControl/viewer/dirpage.cpp \
-    subControl/viewer/liststack.cpp \
     subControl/viewer/mailitem.cpp \
     subControl/viewer/maillistview.cpp \
     subControl/viewer/mailpage.cpp \
     subControl/viewer/sidebar.cpp \
     subControl/viewer/sidebutton.cpp \
-    subControl/viewer/useritem.cpp \
-    subControl/viewer/userlistview.cpp \
-    subControl/viewer/userpage.cpp \
     utils/flowlayout.cpp \
     utils/mime.cpp \
     utils/translator.cpp \
@@ -69,18 +62,11 @@ HEADERS += \
     subControl/sender/itembutton.h \
     subControl/sender/lineedit.h \
     subControl/sender/maileditor.h \
-    subControl/viewer/diritem.h \
-    subControl/viewer/dirlistview.h \
-    subControl/viewer/dirpage.h \
-    subControl/viewer/liststack.h \
     subControl/viewer/mailitem.h \
     subControl/viewer/maillistview.h \
     subControl/viewer/mailpage.h \
     subControl/viewer/sidebar.h \
     subControl/viewer/sidebutton.h \
-    subControl/viewer/useritem.h \
-    subControl/viewer/userlistview.h \
-    subControl/viewer/userpage.h \
     utils/flowlayout.h \
     utils/mime.h \
     utils/translator.h \

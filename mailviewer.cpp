@@ -59,6 +59,7 @@ void MailViewer::IMAPLoginFinish()
 void MailViewer::IMAPListFinish(QList<IMAPDir> dirs)
 {
     dirList = dirs;
+    sideBar->setDirList(dirList);
     this->dir = "INBOX";
     imap->select(this->dir);
 }
@@ -67,6 +68,7 @@ void MailViewer::IMAPSelectFinish(QString dir, uint mails, uint recents)
 {
     this->dir = dir;
     this->mailList = db->getMailList(user.mail,dir);
+    this->mailPage->setMailList(mailList);
     if(mailList.isEmpty())
     {
         imap->search("ALL");
@@ -82,6 +84,8 @@ void MailViewer::IMAPSearchFinish(QList<int> searchList)
     //搜索结果可能是不连续的，所以只能一个一个fetch
     for(auto i : searchList)
     {
+        if(i == 0)
+            continue;
         imap->fetch(QString::number(i),"BODY[]");
     }
 }
@@ -100,17 +104,15 @@ void MailViewer::IMAPFetchFinsh(int index, QString mail)
     head.mailbox = user.mail;
     db->insertNewMail(head,mail);
     mailList.append(head);
-//    this->listStack->setMailList(mailList);
+    mailPage->setMailList(mailList);
 }
 
 
 
 void MailViewer::showMail(int i)
 {
-//    QString mail = db->getMailByID(i);
-//    MailPraser praser(mail.toUtf8());
-//    QString html = praser.getHtml();
-//    this->webView->setHtml(html);
+    QString mail = db->getMailByID(i,user.mail);
+    mailBrowser->setMail(mail);
 }
 
 void MailViewer::changeDir(QString dir)
@@ -118,24 +120,30 @@ void MailViewer::changeDir(QString dir)
     imap->select(dir);
 }
 
+void MailViewer::changeUser(QString mail)
+{
+    //TODO
+}
+
 void MailViewer::initUI()
 {
     QHBoxLayout *hLayout = new QHBoxLayout(this);
     sideBar = new SideBar(this);
     mailPage = new MailPage(this);
-    webView = new QWebView(this);
+    mailBrowser = new MailBrowser(this);
+    sideBar->setUserList(this->userList);
+    mailPage->setMailList(this->mailList);
     hLayout->addWidget(sideBar);
     hLayout->addWidget(mailPage);
-    hLayout->addWidget(webView,1);
+    hLayout->addWidget(mailBrowser,1);
 }
 
 void MailViewer::initConnect()
 {
-//    connect(sideBar,SIGNAL(selectDirClick()),this,SLOT(toDirList()));
-//    connect(sideBar,SIGNAL(selectUserClick()),this,SLOT(toUserList()));
-//    connect(sideBar,SIGNAL(writeMailClick()),this,SLOT(writeMail()));
-//    connect(listStack,SIGNAL(mailClick(int)),this,SLOT(showMail(int)));
-//    connect(listStack,SIGNAL(dirClick(QString)),this,SLOT(changeDir(QString)));
+    connect(sideBar,SIGNAL(selectDir(QString)),this,SLOT(changeDir(QString)));
+    connect(sideBar,SIGNAL(selectUser(QString)),this,SLOT(changeUser(QString)));
+    connect(sideBar,SIGNAL(writeMailClick()),this,SLOT(writeMail()));
+    connect(mailPage,SIGNAL(itemClick(int)),this,SLOT(showMail(int)));
 
     connect(imap,SIGNAL(IMAPError(QString)),this,SLOT(IMAPError(QString)));
     connect(imap,SIGNAL(connected()),this,SLOT(IMAPConnected()));
